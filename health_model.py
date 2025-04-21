@@ -3,6 +3,7 @@ import pandas as pd
 import cirq
 import numpy as np
 import os
+from sympy import Symbol
 
 # Step 1: Classify heart disease risk
 def classify_heart_disease(row):
@@ -70,8 +71,8 @@ def generate_report(risk_factors, values):
 # Step 3: Quantum Optimization with QAOA-style logic
 def quantum_optimize_health_risk():
     qubits = [cirq.GridQubit(0, i) for i in range(3)]
-    gamma = cirq.Symbol('gamma')
-    beta = cirq.Symbol('beta')
+    gamma = Symbol('gamma')
+    beta = Symbol('beta')
     circuit = cirq.Circuit()
 
     # Initial state
