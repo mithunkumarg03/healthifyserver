@@ -7,18 +7,20 @@ from sympy import Symbol
 
 # Step 1: Classify heart disease risk
 def classify_heart_disease(row):
-    risk_factors = []
+    # Convert values to numeric for safety
     values = {
-        "Heart Rate": row.get('heart rate', "N/A"),
-        "Blood Pressure": row.get('blood pressure', "N/A"),
-        "Stress Level": row.get('stress level', "N/A")
+        "Heart Rate": pd.to_numeric(row.get('heart rate', "N/A"), errors='coerce'),
+        "Blood Pressure": pd.to_numeric(row.get('blood pressure', "N/A"), errors='coerce'),
+        "Stress Level": pd.to_numeric(row.get('stress level', "N/A"), errors='coerce')
     }
 
-    if isinstance(values["Heart Rate"], (int, float)) and values["Heart Rate"] > 100:
+    risk_factors = []
+
+    if values["Heart Rate"] > 100:
         risk_factors.append("Heart Rate")
-    if isinstance(values["Blood Pressure"], (int, float)) and values["Blood Pressure"] > 140:
+    if values["Blood Pressure"] > 140:
         risk_factors.append("Blood Pressure")
-    if isinstance(values["Stress Level"], (int, float)) and values["Stress Level"] > 6:
+    if values["Stress Level"] > 6:
         risk_factors.append("Stress Level")
 
     if risk_factors:
@@ -32,14 +34,14 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 def generate_report(risk_factors, values):
     if not risk_factors:
         return (
-            "🟢 *Low Risk Summary*\n"
+            "🟢 Low Risk Summary\n"
             "----------------------------------------\n"
             "✅ The patient's biometric indicators are within acceptable ranges.\n\n"
-            "*Observations:*\n"
+            "Observations:\n"
             "- Normal heart rate\n"
             "- Normal blood pressure\n"
             "- Normal stress level\n\n"
-            "*Recommendation:*\n"
+            "Recommendation:\n"
             "- Continue regular exercise and heart-healthy diet\n"
             "- Schedule annual checkups\n"
             "- Maintain low stress levels through relaxation techniques\n"
@@ -116,7 +118,7 @@ def create_risk_table(all_values):
     table += "<tr><th>Parameter</th><th>Value</th><th>Status</th></tr>"
 
     for k, v in expected_params.items():
-        if v == "N/A":
+        if pd.isna(v):
             status = "Not Provided"
             color = "gray"
         else:
